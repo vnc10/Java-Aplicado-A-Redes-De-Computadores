@@ -2,6 +2,7 @@ package com.mycompany.teste;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,7 +12,7 @@ public class ThreadAtendeCliente implements Runnable {
 
     private JTextArea tArea;
     private Socket conexao;
-    private DataInputStream entrada;
+    private ObjectInputStream entrada;
 
     public ThreadAtendeCliente() {
     }
@@ -25,14 +26,15 @@ public class ThreadAtendeCliente implements Runnable {
     public void run() {
         try {
             this.tArea.append("Conexão estabelecida...\n");
-            entrada = new DataInputStream(conexao.getInputStream());
-            for(int i=0;i<20;i++) {            
-                this.tArea.append("Informação recebida:\t" + entrada.readUTF());
-                scrollDown();
-            }
+            entrada = new ObjectInputStream(conexao.getInputStream());
+            Pessoa p = (Pessoa) entrada.readObject();
+            this.tArea.append("Informação recebida:\t" + p.getNome());
+            scrollDown();
             conexao.close();
         } catch (IOException ex) {
             this.tArea.append("\t");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
         this.tArea.append("Fechando conexão...\n");
 

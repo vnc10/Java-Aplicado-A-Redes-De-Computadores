@@ -1,15 +1,13 @@
 package com.mycompany.teste;
 
-import com.mycompany.teste.ClientInterface;
-
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+import java.io.ObjectOutputStream;
 
 public class ThreadCliente implements Runnable {
 
@@ -17,7 +15,7 @@ public class ThreadCliente implements Runnable {
     private JTextArea tArea;
     private int porta;
     private DataInputStream entrada;
-    private DataOutputStream saida;
+    private ObjectOutputStream saida;
 
     public ThreadCliente(JTextArea tA, int p) {
         this.tArea = tA;
@@ -29,19 +27,18 @@ public class ThreadCliente implements Runnable {
         try {
             conexao = new Socket("localhost", porta);
             tArea.append("Conexão estabelecida...\n");
-            while (!Thread.currentThread().isInterrupted()) {
-                tArea.append("Enviando dados...\n");
+                Pessoa pessoa = new Pessoa("Vini", 15);
+                tArea.append("Enviando dados de pessoa: " + pessoa.getNome() + pessoa.getIdade() + "\n");
                 scrollDown();
-                saida = new DataOutputStream(conexao.getOutputStream());
-                saida.writeUTF("Recebendo dados do cliente...\n");
+                saida = new ObjectOutputStream(conexao.getOutputStream());
+                saida.writeObject(pessoa);
                 Thread.sleep(100);
-            }            
-                        
+
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(tArea, "Servidor terminou a conexão!");
-        } catch(InterruptedException ex){
+        } catch (InterruptedException ex) {
             ex.getMessage();
-        } finally{
+        } finally {
             try {
                 saida.flush();
                 tArea.append("Fechando conexão...\n");
@@ -51,7 +48,7 @@ public class ThreadCliente implements Runnable {
             }
         }
     }
-    
+
     public void scrollDown() {
         tArea.setCaretPosition(tArea.getText().length());
     }
