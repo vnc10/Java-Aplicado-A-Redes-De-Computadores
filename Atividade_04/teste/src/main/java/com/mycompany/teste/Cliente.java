@@ -5,6 +5,8 @@
  */
 package com.mycompany.teste;
 
+import javax.swing.*;
+
 /**
  *
  * @author User
@@ -130,6 +132,10 @@ public class Cliente extends javax.swing.JFrame {
 
     private void jBConectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBConectarActionPerformed
         // TODO add your handling code here:
+
+        if(jTextField1.getText().isBlank() || jTextField3.getText().isBlank()){
+            JOptionPane.showMessageDialog(null, "Nome ou idade não pode estar em branco", "ERRO", 0);
+        }
         threadCliente = new Thread(new ThreadCliente(jTextField1.getText(), jTextField2, jTextField3.getText(), Integer.parseInt(jTPorta.getText())));
         threadCliente.start();
         jBConectar.setEnabled(false);
